@@ -1,4 +1,5 @@
 from flask import Flask
+from helper import is_isbn_or_key
 
 app = Flask(__name__)
 app.config.from_object('config')  # 载入config.py配置文件
@@ -11,6 +12,13 @@ def hello():
 	}
 	#  返回（信息，状态码，头文件）
 	return "hello world", 200, header
+
+
+@app.route('book/search/<q>/<page>')
+def search(q,page):
+	isbn_or_key = is_isbn_or_key(q)
+## 准备开始调用api
+
 
 if __name__ == "__main__":
 	#  在生产环境下使用 nginx + uwsgi 来配置
