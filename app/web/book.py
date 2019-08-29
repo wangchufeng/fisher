@@ -1,6 +1,7 @@
 from flask import jsonify, request
-from helper import is_isbn_or_key
-from yushu_book import YuShuBook
+from app.libs.helper import is_isbn_or_key
+from app.spider.yushu_book import YuShuBook
+from app.view_models.book import BookCollection
 from . import web
 from app.forms.book import SearchForm
 #  使用蓝图来注册视图函数 将多个视图拆分多个模块
@@ -17,16 +18,22 @@ def search():
 	#  request.args下面还包含许多其他信息，但是是不可变字典
 	#  a = request.args.to_dict()   将其转为可变字典
 	form = SearchForm(request.args)
+	books = BookCollection()
+
 	if form.validate():
+		# strip函数剔除字符串前后空格
 		q = form.q.data.strip()
 		page = form.page.data
 		isbn_or_key = is_isbn_or_key(q)
+		yushu_book = YuShuBook()
+
 		if isbn_or_key == 'isbn':
-			result = YuShuBook.search_by_isbn(q)
+			yushu_book.search_by_isbn(q)
 		else:
-			result = YuShuBook.search_by_key(q)
+			yushu_book.search_by_keyword(q, page)
 		#  返回的result是一个字典,需要将其序列化
 		#  return json.dumps(result), 200, {'content-type': 'appplication/json'}
-		return jsonify(result)
+		books.fill(yushu_book, q)
+		return jsonify(books)
 	else:
-		return jsonify({"msg": "参数校验失败"})
+		return jsonify(form.errors)
