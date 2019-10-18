@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+{% block content %}
+    {#    加上super可以继承content里面的内容，不加则覆盖#}
+    {{ super() }}
+
+    Hello world!!
+    {#    {% if data.age == 19 %}#}
+    {#        {{ data.name }}#}
+    {#    {% elif data.age > 19 %}#}
+    {#        {{ data.name}}#}
+    {#    {% else %}#}
+    {#        {{ data.age }}#}
+    {#    {% endif %}#}
+
+    {#% for get_flashed_message in get_flashed_messages %#}
+
+    {#% endfor %#}
+
+    {% for key,value in data.items() %}
+        {{ value }}
+    {% endfor %}
+
+    {{ data | length() }}
+
+    {%  set messages = get_flashed_messages() %}
+        flash:{{ messages }}
+
+    {#    with 变量作用域#}
+    {% with messages = get_flashed_messages() %}
+        flash:{{ messages }}
+    {% endwith %}
+{% endblock %}
