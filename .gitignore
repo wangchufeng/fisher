@@ -1,1 +1,3 @@
 /app/secure.py
+*.xml
+*.pyc
